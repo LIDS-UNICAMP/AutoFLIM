@@ -1,0 +1,10 @@
+random2
+pillow>=10.2.0
+numpy>=1.26.4
+torch>=2.5.1
+torchvision>=0.20.1
+scikit-image>=0.25.2
+scikit-learn>=1.6.1
+faiss-cpu>=1.10.0
+matplotlib
+monai>=1.4.0

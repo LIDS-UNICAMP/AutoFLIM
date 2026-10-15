@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autoflim"
+version = "0.1.0"
+description = "Architecture search for FLIM encoders: joint search over encoder architecture and annotated training images."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Gilson Júnior Soares" }]
+keywords = ["flim", "neural-architecture-search", "segmentation", "active-learning"]
+
+dependencies = [
+    "numpy>=1.26.4",
+    "pandas>=2.0",
+    "pillow>=10.2.0",
+    "torch>=2.5.1",
+    "torchvision>=0.20.1",
+    "scikit-image>=0.25.2",
+    "scikit-learn>=1.6.1",
+    "scipy>=1.11",
+    "pyyaml>=6.0",
+    "tqdm>=4.66",
+    # pyflim's clustering backend.
+    "faiss-cpu>=1.10.0",
+    "monai>=1.4.0",
+]
+
+[project.optional-dependencies]
+# TensorBoard logging of the search (runtime.tensorboard: true).
+tensorboard = ["tensorboard>=2.16"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+autoflim = "autoflim.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["autoflim*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

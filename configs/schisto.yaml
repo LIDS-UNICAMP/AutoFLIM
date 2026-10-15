@@ -1,0 +1,106 @@
+# Schistosoma mansoni eggs — paper configuration.
+#
+# Reproduces run 13 of the paper repository (exp_ga_dynamic_<pct>pct_13).
+# Translated from results/schisto/exp_ga_dynamic_100pct_13/config.yaml; the
+# search settings were identical across all six data percentages and all three
+# splits, so one config covers the whole sweep.
+#
+# Data: 1219 images, split 549 train / 60 val / 610 test.
+# The split CSVs under data/schisto/ are the paper's exact lists — regenerating
+# them with `autoflim prepare` would produce different partitions and different
+# numbers.
+#
+# To sweep data percentages, override train_percentage per run:
+#   for p in 001 005 025 050 075 100; do
+#     autoflim search -c configs/schisto.yaml \
+#       --train-percentage $p --exp-name paper_run13_${p}pct
+#   done
+
+dataset:
+  name: schisto
+  # Adjust to wherever the dataset lives on this machine.
+  path: ~/Documents/datasets/schisto
+  images_dir: images
+  labels_dir: truelabels
+  splits: [1, 2, 3]
+  train_percentage: "100"
+
+search_space:
+  kernel_sizes: [3, 5, 7, 9]
+  n_layers: [2, 3, 4, 5, 6]
+  nkernels_per_marker: [1]
+  noutput_channels: [500]
+  network_types: [standard]
+  # The paper left activation_list unset, which defaults to relu only.
+  activations: [relu]
+  skip_patterns: [none]
+  pool_types: [strided_conv_s1, strided_conv_s2, avg_pool_s2, max_pool_s2]
+  stdev_factors: [0.01]
+  erode_radii: [1.0]
+  marker_adjacencies: [1.5, 3.0, 6.0]
+  combine_strategies: [inferior_reconstruction]
+
+ga:
+  population_size: 30
+  n_generations: 40
+  elite_k: 3
+  tournament_size: 2
+  mutation_rate: 0.3
+  min_mutation_rate: 0.05
+  max_mutation_rate: 0.4
+  mutation_schedule: static
+  ucb_beta: 0.5
+  best_stagnation_patience: 20
+  reeval_elites: false
+  size_objective: nsga2
+  efficiency_metric: flops
+  seed: 123
+
+greedy:
+  n_steps_init: 5
+  n_steps_offspring: 5
+  eps: 0.025
+  patience: 3
+  strategy: second_quartile
+  cold_start_strategy: random
+  max_score_candidates: 50
+  no_image_inheritance: true
+  max_selected_images: -1
+
+markers:
+  n_fg_init: 5
+  n_bg_init: 5
+  use_inference_guided: true
+  densify_mode: none
+  max_densify_steps: 3
+  densify_threshold: 0.4
+  densify_eps: 0.05
+  densify_patience: 3
+  densify_base_count: 3
+  densify_scale: 1.5
+
+model:
+  learner: bofp
+  color_space: lab
+  head_type: none
+  head_type_final: none
+
+eval:
+  binarize_method: yen
+  post_processing: area_filter
+  val_foreground_only: false
+  val_empty_penalty: 0.0
+
+runtime:
+  gpu_ids: [0]
+  num_workers: 1
+  # Paper run used 6 evaluation workers and a cap of 4 concurrent trainings
+  # per split. These only affect speed and memory pressure, not results —
+  # lower them if the GPU runs out of memory.
+  num_workers_evaluation: 6
+  max_gpu_concurrency: 4
+  tensorboard: true
+  tb_marker_log_every: 0
+
+output:
+  exp_name: paper_run13

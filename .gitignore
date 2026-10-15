@@ -1,0 +1,32 @@
+# Run outputs
+results/
+models/
+markers/
+test_results/
+sp/
+debug/
+runs/
+
+# Generated split CSVs, except the paper's own lists, which are committed so
+# published results stay reproducible.
+data/*
+!data/schisto/
+!data/larvae/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+
+# Editors / tooling
+.vscode/
+.idea/
+.claude/
+*.swp
+.DS_Store

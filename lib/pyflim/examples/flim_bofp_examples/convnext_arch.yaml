@@ -1,0 +1,102 @@
+name: my_flim_convnext
+stdev_factor: 0.01
+network_type: regular
+use_bias: True
+use_marker_based_normalization: False
+ninput_channels: 3
+
+blocks:
+  - name: conv1
+    conv_type: convnext
+    block_type: conv
+    inputs: [input]
+    kernel_size: [3, 3]
+    nkernels_per_marker: 2
+    noutput_channels: 100
+    dilation_values: [1,1]
+    stride: 1
+    padding_mode: reflect
+    activation: relu
+    learnable: true
+    learner:
+      type: bofp
+      clusterer: faiss_kmeans
+      kwargs:
+        adj_radius: 3
+    pooling:
+      type: max_pool
+      size: [3, 3]
+      stride: 2
+
+  - name: conv2
+    conv_type: convnext
+    block_type: conv
+    inputs: [conv1]
+    kernel_size: [3, 3]
+    nkernels_per_marker: 2
+    noutput_channels: 100
+    dilation_values: [1,1]
+    stride: 1
+    padding_mode: reflect
+    activation: relu
+    learnable: true
+    learner:
+      type: bofp
+      clusterer: faiss_kmeans
+      kwargs:
+        adj_radius: 3
+    pooling:
+      type: max_pool
+      size: [3, 3]
+      stride: 2
+
+  - name: conv3
+    conv_type: convnext
+    block_type: conv
+    inputs: [conv2]
+    kernel_size: [3, 3]
+    nkernels_per_marker: 2
+    noutput_channels: 100
+    dilation_values: [1,1]
+    stride: 1
+    padding_mode: reflect
+    activation: relu
+    learnable: true
+    learner:
+      type: bofp
+      clusterer: faiss_kmeans
+      kwargs:
+        adj_radius: 3
+    pooling:
+      type: max_pool
+      size: [3, 3]
+      stride: 2
+
+  - name: conv4
+    conv_type: convnext
+    block_type: conv
+    inputs: [conv3]
+    kernel_size: [3, 3]
+    nkernels_per_marker: 2
+    noutput_channels: 100
+    dilation_values: [1,1]
+    stride: 1
+    padding_mode: reflect
+    activation: relu
+    learnable: true
+    learner:
+      type: bofp
+      clusterer: faiss_kmeans
+      kwargs:
+        adj_radius: 3
+    pooling:
+      type: max_pool
+      size: [3, 3]
+      stride: 2
+
+decoder:
+  type: vanilla_adaptive_decoder
+  adaptation_fn: robust_weights
+  adj_radius: 1.5
+  decoder_layers: [conv1, conv2, conv3, conv4]
+  combine_strategy: None
